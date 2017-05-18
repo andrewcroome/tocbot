@@ -116,7 +116,7 @@ module.exports = function (options) {
     var posFixedEl = document.querySelector(options.positionFixedSelector)
 
     if (options.fixedSidebarOffset === 'auto') {
-      options.fixedSidebarOffset = document.querySelector(options.tocSelector).offsetTop
+      options.fixedSidebarOffset = document.querySelector(options.positionFixedSelector).offsetTop
     }
 
     if (top > options.fixedSidebarOffset) {
