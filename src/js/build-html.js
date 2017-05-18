@@ -11,6 +11,11 @@ module.exports = function (options) {
   var currentlyHighlighting = true
   var SPACE_CHAR = ' '
 
+  var contentElementOffsetTop = document.querySelector(options.contentSelector).offsetTop
+  var contentElementHeight = document.querySelector(options.contentSelector).clientHeight
+  var tocElementHeight = document.querySelector(options.tocSelector).clientHeight
+  var sidebarBottomPositionEnd = contentElementOffsetTop + contentElementHeight - tocElementHeight
+
   /**
    * Create link and list elements.
    * @param {Object} d
@@ -115,12 +120,41 @@ module.exports = function (options) {
     }
 
     if (top > options.fixedSidebarOffset) {
-      if (posFixedEl.className.indexOf(options.positionFixedClass) === -1) {
-        posFixedEl.className += SPACE_CHAR + options.positionFixedClass
+      // check whether the toc has reached the bottom position
+      if (top < sidebarBottomPositionEnd) {
+        // we have not reached the bottom, the toc should be fixed
+        addClassToElement(posFixedEl, options.positionFixedClass)
+        removeClassFromElement(posFixedEl, options.positionBottomClass)
+        posFixedEl.style.top = ''
+      }
+      else {
+        // we have reached the bottom, the toc should sit at the bottom
+        removeClassFromElement(posFixedEl, options.positionFixedClass)
+        addClassToElement(posFixedEl, options.positionBottomClass)
+        posFixedEl.style.top = sidebarBottomPositionEnd + 'px'
       }
     } else {
-      posFixedEl.className = posFixedEl.className.split(SPACE_CHAR + options.positionFixedClass).join('')
+      removeClassFromElement(posFixedEl, options.positionFixedClass)
+      removeClassFromElement(posFixedEl, options.positionBottomClass)
+      posFixedEl.style.top = ''
     }
+  }
+
+
+  /**
+   * Add a class to an element
+   */
+  function addClassToElement (element, className) {
+    if (element.className.indexOf(className) === -1) {
+      element.className += SPACE_CHAR + className
+    }
+  }
+
+  /**
+   * Remove a class from an element
+   */
+  function removeClassFromElement (element, className) {
+    element.className = element.className.split(SPACE_CHAR + className).join('')
   }
 
   /**
