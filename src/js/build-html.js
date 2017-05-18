@@ -11,11 +11,6 @@ module.exports = function (options) {
   var currentlyHighlighting = true
   var SPACE_CHAR = ' '
 
-  var contentElementOffsetTop = document.querySelector(options.contentSelector).offsetTop
-  var contentElementHeight = document.querySelector(options.contentSelector).clientHeight
-  var tocElementHeight = document.querySelector(options.tocSelector).clientHeight
-  var sidebarBottomPositionEnd = contentElementOffsetTop + contentElementHeight - tocElementHeight
-
   /**
    * Create link and list elements.
    * @param {Object} d
@@ -115,11 +110,20 @@ module.exports = function (options) {
     var top = document.documentElement.scrollTop || body.scrollTop
     var posFixedEl = document.querySelector(options.positionFixedSelector)
 
+    var contentElementOffsetTop = document.querySelector(options.contentSelector).offsetTop
+    var contentElementHeight = document.querySelector(options.contentSelector).clientHeight
+    var tocElementHeight = document.querySelector(options.tocSelector).clientHeight
+    var sidebarBottomPositionEnd = contentElementOffsetTop + contentElementHeight - tocElementHeight
+
+    var fixedSidebarOffset
+
     if (options.fixedSidebarOffset === 'auto') {
-      options.fixedSidebarOffset = document.querySelector(options.positionFixedSelector).offsetTop
+      fixedSidebarOffset = document.querySelector(options.contentSelector).offsetTop
+    } else {
+      fixedSidebarOffset = options.fixedSidebarOffset
     }
 
-    if (top > options.fixedSidebarOffset) {
+    if (top > fixedSidebarOffset) {
       // check whether the toc has reached the bottom position
       if (top < sidebarBottomPositionEnd) {
         // we have not reached the bottom, the toc should be fixed
@@ -139,7 +143,6 @@ module.exports = function (options) {
       posFixedEl.style.top = ''
     }
   }
-
 
   /**
    * Add a class to an element
